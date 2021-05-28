@@ -6,7 +6,7 @@ int main(){
 	tree * main_tree = new tree();
 	char input[150];
 	while(true){
-		cout << "ADD, PRINT, FILE, EXIT, DELETE"<<endl;
+		cout << "ADD, PRINT, FILE, EXIT, DELETE, SEARCH"<<endl;
 		cin.getline(input,150);
 		if(!strcmp(input,"ADD")){
 			cout << "Number?"<<endl;
@@ -16,10 +16,15 @@ int main(){
 		else if(!strcmp(input,"DELETE")){
 			cout << "Number?"<<endl;
 			cin.getline(input,150);
-			main_tree->del(atoi(input));
+			main_tree->del(atoi(input), true);
 		}
 		else if(!strcmp(input,"PRINT")){
 			main_tree->print();
+		}
+		else if(!strcmp(input,"SEARCH")){
+			cout << "Number?"<<endl;
+			cin.getline(input,150);
+			main_tree->del(atoi(input),false);
 		}
 		else if(!strcmp(input,"FILE")){
 			cout << "File name?"<<endl;

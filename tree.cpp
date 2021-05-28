@@ -225,7 +225,7 @@ void tree::bst_delete(node * to_delete){
 	}
 	
 }
-void tree::del(int num){
+void tree::del(int num, bool del){
 	itr = root;
 	while(itr){
 		if(num >itr->value){
@@ -235,10 +235,16 @@ void tree::del(int num){
 			itr = itr->left;
 		}
 		else if(num == itr->value){
-			bst_delete(itr);
-			break;
+			if(del){
+				bst_delete(itr);
+			}
+			else{
+				cout << itr->value<< " exists"<<endl;
+			}
+			return;
 		}
 	}
+	cout << "Not found"<<endl;
 }
 void tree::insert(node * to_add){
 	to_add->left=to_add->right=to_add->parent=nullptr;

@@ -24,7 +24,7 @@ class tree{
 	bool check_red(node * sibling);
 	void bst_delete(node * to_delete);
 	void read_file(char * file_name);
-	void del(int num);
+	void del(int num, bool del);
 	void insert(node * to_add);
 	void fix_tree(node * new_node);
 	void print();
