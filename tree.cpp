@@ -415,12 +415,17 @@ void tree::print_util(node * in_node, int spaces){
 void tree::print(){
 	print_util(root,0);
 }
+void tree::recur_delete(node * in_node){
+	if(in_node and in_node->left){
+		recur_delete(in_node->left);
+	}
+	if(in_node and in_node->right){
+		recur_delete(in_node->right);
+	}
+	if(in_node){
+		delete in_node;
+	}
+}
 tree::~tree(){
-	if(root and root->left){
-		delete root->left;
-	}
-	if(root and root->right){
-		delete root->right;
-	}
-	delete root;
+	recur_delete(root);
 }

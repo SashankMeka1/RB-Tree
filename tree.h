@@ -11,6 +11,7 @@ class tree{
 	node * root = nullptr;
 	node * itr = nullptr;
 	public:
+	void recur_delete(node * in_node);
 	void rrotate(node *gp,node *p, node * new_node);
 	void lrotate(node *gp,node *p, node * new_node);
 	void rlr(node *gp,node *p, node * new_node);
