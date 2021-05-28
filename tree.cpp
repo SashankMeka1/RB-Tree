@@ -185,7 +185,7 @@ void tree::bst_delete(node * to_delete){
 		p = to_delete->parent;
 		p->left==to_delete?p->left=to_delete->left:p->right=to_delete->left;
 		p->left->parent = p;
-		p->left->red = 0;
+		to_delete->left->red = 0;
 		delete to_delete;
 		
 	}
@@ -200,7 +200,7 @@ void tree::bst_delete(node * to_delete){
 			p = to_delete->parent;
 			p->left==to_delete?p->left=to_delete->right:p->right=to_delete->right;
                         p->left->parent = p;
-			p->left->red = 0;
+			to_delete->right->red = 0;
 			delete to_delete;
 	}
 	else{
