@@ -92,17 +92,8 @@ void tree::fix_double_blk(node * replace){
 	if(p->left == replace){
 		sib = p->right;
 		if(check_red(sib)){
-			swap(p->value,sib->value);
-			p->right = sib->right;
-			if(sib->right){
-				sib->right->parent = p;
-			}
-			sib->right = sib->left;
-			sib->left = p->left;
-			if(p->left){
-				p->left->parent = sib;
-			}
-			p->left = sib;
+			rrotate(p,sib,sib->right);
+			print();
 			if(sib->right){
 				sib->right->red = 1;
 			}
@@ -111,6 +102,7 @@ void tree::fix_double_blk(node * replace){
 			if(!(sib->red)){
 				fix(p);
 			}
+			
 		}
 		else{
 			if(p->right){
@@ -126,28 +118,28 @@ void tree::fix_double_blk(node * replace){
 	}
 	else{
 		if(check_red(p->left)){
-			sib = p->left;//p
-			if(check_red(sib)){//r bb
-                                swap(p->value,sib->value);
-				p->left = sib->left;
-				if(sib->left){
-					sib->left->parent = p;
-				}
-				sib->left = sib->right;
-				sib->right = p->right;
-				if(p->right){
-					p->right->parent = sib;
-				}
-				p->right = sib;
-				if(sib->left){
-					sib->left->red = 1;
-				}
-				if(p->left){p->left->red = 0;}
-				if(p->right){p->right->red = 0;}
-				if(!(sib->red)){
-					fix(p);
-				}
-                        }
+			sib = p->left;//p//r bb
+			/*swap(p->value,sib->value);
+			p->left = sib->left;
+			if(sib->left){
+				sib->left->parent = p;
+			}
+			sib->left = sib->right;
+			sib->right = p->right;
+			if(p->right){
+				p->right->parent = sib;
+			}
+			p->right = sib;*/
+			lrotate(p,sib,sib->left);
+			print();
+			if(sib->left){
+				sib->left->red = 1;
+			}
+			if(p->left){p->left->red = 0;}
+			if(p->right){p->right->red = 0;}
+			if(!(sib->red)){
+				fix(p);
+			}
 		}
 		else{
 			if(p->left){
@@ -171,39 +163,8 @@ void tree::get_replacement(node * to_delete){
 	else{
 		replace = get_succ(to_delete->right);
 	}
-		
-	if(check_red(replace)){
-		if(replace->right or replace->left){
-			replace->right?replace->right->red=0:replace->left->red=0;
-		}
-	}
-	else{
-		fix_double_blk(replace);			
-	}
-	if(replace->right){
-		if(replace->parent->right == replace){
-			replace->parent->right = replace->right;
-		}
-		else{
-			replace->parent->left = replace->right;
-		}
-		replace->right->parent = replace->parent;
-		replace->right->red = replace->red;
-	}
-	else{
-		if(replace->parent->right == replace){
-			replace->parent->right = replace->left;
-		}
-		else{
-			replace->parent->left = replace->right;
-		}
-		if(replace->left){
-			replace->left->parent = replace->parent;
-			replace->left->red = replace->red;
-		}
-	}
-	swap(to_delete->value, replace->value);	
-	delete replace;
+	swap(replace->value, to_delete->value);
+	bst_delete(replace);
 }
 bool tree::check_red(node * sibling){
 	return sibling and ((sibling and sibling->red) or (sibling->left and sibling->left->red) or (sibling->right and sibling->right->red));
@@ -221,10 +182,10 @@ void tree::bst_delete(node * to_delete){
 		if(!check_red(to_delete)){
 			fix_double_blk(to_delete);
 		}		
-		p->left = to_delete->parent;
+		p = to_delete->parent;
 		p->left==to_delete?p->left=to_delete->left:p->right=to_delete->left;
 		p->left->parent = p;
-		p->left->red = 1;
+		p->left->red = 0;
 		delete to_delete;
 		
 	}
@@ -239,7 +200,7 @@ void tree::bst_delete(node * to_delete){
 			p = to_delete->parent;
 			p->left==to_delete?p->left=to_delete->right:p->right=to_delete->right;
                         p->left->parent = p;
-			p->left->red = 1;
+			p->left->red = 0;
 			delete to_delete;
 	}
 	else{
