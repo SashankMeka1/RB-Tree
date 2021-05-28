@@ -93,7 +93,6 @@ void tree::fix_double_blk(node * replace){
 		sib = p->right;
 		if(check_red(sib)){
 			rrotate(p,sib,sib->right);
-			print();
 			if(sib->right){
 				sib->right->red = 1;
 			}
@@ -109,6 +108,7 @@ void tree::fix_double_blk(node * replace){
 				p->right->red = 1;
 			}
 			if(p!=root and !(p->red)){
+				cout << "Poo";
 				fix_double_blk(p);	
 			}
 			else{
@@ -131,7 +131,6 @@ void tree::fix_double_blk(node * replace){
 			}
 			p->right = sib;*/
 			lrotate(p,sib,sib->left);
-			print();
 			if(sib->left){
 				sib->left->red = 1;
 			}
@@ -146,6 +145,7 @@ void tree::fix_double_blk(node * replace){
 				p->left->red = 1;
 			}
 			if(p!=root and !(p->red)){
+				cout << "root";
                                 fix_double_blk(p);
                         }
 			else{
@@ -184,7 +184,7 @@ void tree::bst_delete(node * to_delete){
 		}		
 		p = to_delete->parent;
 		p->left==to_delete?p->left=to_delete->left:p->right=to_delete->left;
-		p->left->parent = p;
+		to_delete->left->parent = p;
 		to_delete->left->red = 0;
 		delete to_delete;
 		
@@ -199,8 +199,8 @@ void tree::bst_delete(node * to_delete){
 		}
 			p = to_delete->parent;
 			p->left==to_delete?p->left=to_delete->right:p->right=to_delete->right;
-                        p->left->parent = p;
 			to_delete->right->red = 0;
+			to_delete->right->parent = p;
 			delete to_delete;
 	}
 	else{
