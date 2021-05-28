@@ -32,52 +32,33 @@ void tree::fix(node * p){
 		if(p->left->right){
 			gc = p->left->right;
 			c = p->left;
-			p->left = gc;
-			c->right = gc->left;
-			if(c->right){
-				c->right->parent = c;
-			}
-			gc->left = c;
+			lrl(p,c,gc);
 		}
-		gc = p->left->left;
 		c = p->left;
-		swap(p->value, c->value);
-		c->left = c->right;
-		c->right = p->right;
+		gc = p->left->left;
+		lrotate(p,c,gc);
 		if(p->right){
 			p->right->parent = c;
 		}
 		if(gc){
 			gc->parent = p;
 		}
-		p->left = gc;
-		p->right = c;
 	}
 	else if(!(p->left) and p->right){
 		if(p->right->left){
 			gc = p->right->left;
-                        c = p->right;
-                        p->right = gc;
-                        c->left = gc->right;
-                        if(c->left){
-                                c->left->parent = c;
-                        }
-                        gc->right = c;
+			c = p->right;
+			rlr(p,c,gc);
                 }
-                gc = p->right->right;
-                c = p->right;
-                swap(p->value, c->value);
-                c->right = c->left;
-                c->left = p->left;
+		c = p->right;
+		gc = p->right->right;
+            	rrotate(p,c,gc); 
                 if(p->left){
                         p->left->parent = c;
                 }
                 if(gc){
                         gc->parent = p;
                 }
-                p->right = gc;
-                p->left = c;
-	print();
 	}
 	if(p->left){
 		p->left->red = 0;
@@ -339,6 +320,50 @@ void tree::insert(node * to_add){
 	}
 	
 }
+void tree::lrotate(node *gp,node *p, node *new_node){
+	p->left = p->right;
+	p->right = gp->right;
+	gp->left = new_node;
+	gp->right = p;
+	swap(p->value,gp->value);
+	new_node->parent = gp;
+	if(p->right){
+		p->right->parent = p;
+	}
+}
+void tree::rrotate(node *gp,node *p, node *new_node){
+	p->right = p->left;
+	p->left = gp->left;
+	gp->right = new_node;
+	gp->left = p;
+	swap(gp->value,p->value);
+	new_node->parent = gp;
+	if(p->left){
+		p->left->parent = p;
+	}
+}
+void tree::lrl(node *gp,node *p, node *new_node){
+	gp->left = new_node;
+	p->right = new_node->left;
+	new_node->left = p;
+	if(p->right){
+		p->right->parent = p;
+	}
+	new_node->parent = gp;
+	p->parent = new_node;
+	swap(p,new_node);
+}
+void tree::rlr(node *gp,node *p, node *new_node){
+	gp->right = new_node;
+	p->left = new_node->right;
+	new_node->right = p;
+	if(p->left){
+		p->left->parent = p;
+	}
+	new_node->parent = gp;
+	p->parent = new_node;
+	swap(new_node,p);
+}
 void tree::fix_tree(node * new_node){
 	node * gp;
 	node * p;
@@ -353,25 +378,9 @@ void tree::fix_tree(node * new_node){
 			}
 			else{
 				if(p->right == new_node){
-					gp->left = new_node;
-					p->right = new_node->left;
-					new_node->left = p;
-					if(p->right){
-						p->right->parent = p;
-					}
-					new_node->parent = gp;
-					p->parent = new_node;
-					swap(p,new_node);
+					lrl(gp,p,new_node);
 				}
-				p->left = p->right;
-				p->right = gp->right;
-				gp->left = new_node;
-				gp->right = p;
-				swap(p->value,gp->value);
-				new_node->parent = gp;
-				if(p->right){
-					p->right->parent = p;
-				}
+				lrotate(gp,p,new_node);	
 			}
 		}
 		else if(gp and gp->right == p){
@@ -383,25 +392,9 @@ void tree::fix_tree(node * new_node){
 			else{
 				//break;
 				if(p->left == new_node){
-					gp->right = new_node;
-					p->left = new_node->right;
-					new_node->right = p;
-					if(p->left){
-						p->left->parent = p;
-					}
-					new_node->parent = gp;
-					p->parent = new_node;
-					swap(new_node,p);
+					rlr(gp,p,new_node);	
 				}
-				p->right = p->left;
-				p->left = gp->left;
-				gp->right = new_node;
-				gp->left = p;
-				swap(gp->value,p->value);
-				new_node->parent = gp;
-				if(p->left){
-					p->left->parent = p;
-				}
+				rrotate(gp,p,new_node);
 			}
 		}
 	}

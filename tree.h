@@ -11,6 +11,10 @@ class tree{
 	node * root = nullptr;
 	node * itr = nullptr;
 	public:
+	void rrotate(node *gp,node *p, node * new_node);
+	void lrotate(node *gp,node *p, node * new_node);
+	void rlr(node *gp,node *p, node * new_node);
+	void lrl(node *gp,node *p, node * new_node);
 	void fix(node * p);
 	void fix_double_blk(node * replace);
 	void get_replacement(node* to_delete);
