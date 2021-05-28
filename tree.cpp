@@ -419,8 +419,8 @@ tree::~tree(){
 	if(root and root->left){
 		delete root->left;
 	}
-	delete root;
 	if(root and root->right){
 		delete root->right;
 	}
+	delete root;
 }
