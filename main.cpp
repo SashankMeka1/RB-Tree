@@ -6,12 +6,17 @@ int main(){
 	tree * main_tree = new tree();
 	char input[150];
 	while(true){
-		cout << "ADD, PRINT, FILE, EXIT"<<endl;
+		cout << "ADD, PRINT, FILE, EXIT, DELETE"<<endl;
 		cin.getline(input,150);
 		if(!strcmp(input,"ADD")){
 			cout << "Number?"<<endl;
 			cin.getline(input,150);
 			main_tree->insert(new node(atoi(input)));
+		}
+		else if(!strcmp(input,"DELETE")){
+			cout << "Number?"<<endl;
+			cin.getline(input,150);
+			main_tree->del(atoi(input));
 		}
 		else if(!strcmp(input,"PRINT")){
 			main_tree->print();

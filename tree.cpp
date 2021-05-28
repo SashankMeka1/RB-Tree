@@ -17,34 +17,271 @@ void tree::read_file(char * file_name){
 		cout << "No file"<<endl;
 	}
 }
-void tree::rb_delete(node * to_delete){
-	nullptr;
-}
-void tree::bst_delete(node * to_delete){
-	node * p = to_delete->parent;
-	if(to_delete->left and to_delete->right){
-	
-	}
-	else if(to_delete->left){
-	
-	}
-	else if(to_delete->right){
-		
+node* tree::get_pred(node * in_node){
+	if(in_node->right){
+		return get_pred(in_node->right);	
 	}
 	else{
-		if(to_delete->red){
-			p->left==to_delete ? p->left=nullptr:p->right=nullptr;
-			delete to_delete;
+		return in_node;
+	}
+}
+void tree::fix(node * p){
+	node * c;
+	node * gc;
+	if(!(p->right) and p->left){
+		if(p->left->right){
+			gc = p->left->right;
+			c = p->left;
+			p->left = gc;
+			c->right = gc->left;
+			if(c->right){
+				c->right->parent = c;
+			}
+			gc->left = c;
+		}
+		gc = p->left->left;
+		c = p->left;
+		swap(p->value, c->value);
+		c->left = c->right;
+		c->right = p->right;
+		if(p->right){
+			p->right->parent = c;
+		}
+		if(gc){
+			gc->parent = p;
+		}
+		p->left = gc;
+		p->right = c;
+	}
+	else if(!(p->left) and p->right){
+		if(p->right->left){
+			gc = p->right->left;
+                        c = p->right;
+                        p->right = gc;
+                        c->left = gc->right;
+                        if(c->left){
+                                c->left->parent = c;
+                        }
+                        gc->right = c;
+                }
+                gc = p->right->right;
+                c = p->right;
+                swap(p->value, c->value);
+                c->right = c->left;
+                c->left = p->left;
+                if(p->left){
+                        p->left->parent = c;
+                }
+                if(gc){
+                        gc->parent = p;
+                }
+                p->right = gc;
+                p->left = c;
+	print();
+	}
+	if(p->left){
+		p->left->red = 0;
+	}
+	if(p->right){
+		p->right->red = 0;
+	}
+}
+node * tree::get_succ(node * in_node){
+	if(in_node->left){
+                return get_pred(in_node->left);
+        }
+        else{
+                return in_node;
+        }
+}
+void tree::fix_double_blk(node * replace){
+	node * p = replace->parent;
+	node * sib;
+	if(!p){
+		itr = root;
+		if(root->left){
+			root = root->left;
 		}
 		else{
-			if(p->left = to_delete){
-				
+			root = root->right;
+		}
+		delete itr;
+		return;
+	}
+	if(p->left == replace){
+		sib = p->right;
+		if(check_red(sib)){
+			swap(p->value,sib->value);
+			p->right = sib->right;
+			if(sib->right){
+				sib->right->parent = p;
+			}
+			sib->right = sib->left;
+			sib->left = p->left;
+			if(p->left){
+				p->left->parent = sib;
+			}
+			p->left = sib;
+			if(sib->right){
+				sib->right->red = 1;
+			}
+			if(p->left){p->left->red = 0;}
+			if(p->right){p->right->red = 0;}	
+			if(!(sib->red)){
+				fix(p);
+			}
+		}
+		else{
+			if(p->right){
+				p->right->red = 1;
+			}
+			if(p!=root and !(p->red)){
+				fix_double_blk(p);	
 			}
 			else{
-				
+				p->red = 0;
 			}
 		}
 	}
+	else{
+		if(check_red(p->left)){
+			sib = p->left;//p
+			if(check_red(sib)){//r bb
+                                swap(p->value,sib->value);
+				p->left = sib->left;
+				if(sib->left){
+					sib->left->parent = p;
+				}
+				sib->left = sib->right;
+				sib->right = p->right;
+				if(p->right){
+					p->right->parent = sib;
+				}
+				p->right = sib;
+				if(sib->left){
+					sib->left->red = 1;
+				}
+				if(p->left){p->left->red = 0;}
+				if(p->right){p->right->red = 0;}
+				if(!(sib->red)){
+					fix(p);
+				}
+                        }
+		}
+		else{
+			if(p->left){
+				p->left->red = 1;
+			}
+			if(p!=root and !(p->red)){
+                                fix_double_blk(p);
+                        }
+			else{
+				p->red = 0;
+			}	
+		}
+	}
+}
+void tree::get_replacement(node * to_delete){
+	node * p = to_delete->parent;
+	node* replace;
+	if(p){
+		replace = to_delete==p->left?get_pred(to_delete->left):get_succ(to_delete->right);
+	}
+	else{
+		replace = get_succ(to_delete->right);
+	}
+		
+	if(check_red(replace)){
+		if(replace->right or replace->left){
+			replace->right?replace->right->red=0:replace->left->red=0;
+		}
+	}
+	else{
+		fix_double_blk(replace);			
+	}
+	if(replace->right){
+		if(replace->parent->right == replace){
+			replace->parent->right = replace->right;
+		}
+		else{
+			replace->parent->left = replace->right;
+		}
+		replace->right->parent = replace->parent;
+		replace->right->red = replace->red;
+	}
+	else{
+		if(replace->parent->right == replace){
+			replace->parent->right = replace->left;
+		}
+		else{
+			replace->parent->left = replace->right;
+		}
+		if(replace->left){
+			replace->left->parent = replace->parent;
+			replace->left->red = replace->red;
+		}
+	}
+	swap(to_delete->value, replace->value);	
+	delete replace;
+}
+bool tree::check_red(node * sibling){
+	return sibling and ((sibling and sibling->red) or (sibling->left and sibling->left->red) or (sibling->right and sibling->right->red));
+}
+void tree::bst_delete(node * to_delete){
+	node * p = to_delete->parent;	
+	if(to_delete->left and to_delete->right){
+		get_replacement(to_delete);
+	}
+	else if(to_delete->left){
+		if(!p){
+			root = to_delete->left;
+			return;
+		}
+		if(!check_red(to_delete)){
+			fix_double_blk(to_delete);
+		}		
+		p->left = to_delete->parent;
+		p->left==to_delete?p->left=to_delete->left:p->right=to_delete->left;
+		p->left->parent = p;
+		p->left->red = 1;
+		delete to_delete;
+		
+	}
+	else if(to_delete->right){
+		if(!p){
+			root = to_delete->left;
+			return;
+		}
+		if(!check_red(to_delete)){
+			fix_double_blk(to_delete);
+		}
+			p = to_delete->parent;
+			p->left==to_delete?p->left=to_delete->right:p->right=to_delete->right;
+                        p->left->parent = p;
+			p->left->red = 1;
+			delete to_delete;
+	}
+	else{
+		if(!p){
+			root = nullptr;
+			return;
+		}
+		if(to_delete->red){
+			p->left==to_delete?p->left=nullptr:p->right=nullptr;
+		}
+		else{
+			fix_double_blk(to_delete);
+			p = to_delete->parent;
+			if(p->left == to_delete){
+				p->left = nullptr;
+			}
+			else{
+				p->right = nullptr;
+			}
+		}
+		delete to_delete;
+	}
+	
 }
 void tree::del(int num){
 	itr = root;
@@ -55,12 +292,14 @@ void tree::del(int num){
 		else if(num < itr->value){
 			itr = itr->left;
 		}
-		else{
+		else if(num == itr->value){
 			bst_delete(itr);
+			break;
 		}
 	}
 }
 void tree::insert(node * to_add){
+	to_add->left=to_add->right=to_add->parent=nullptr;
 	if(!root){
 		root = to_add;
 		root->red = false;
@@ -109,7 +348,8 @@ void tree::fix_tree(node * new_node){
 		if(gp and gp->left == p){
 			if(gp->right and gp->right->red){
 				gp->left->red = gp->right->red = 0;
-				gp->red = 1;	
+				gp->red = 1;
+				new_node = gp;	
 			}
 			else{
 				if(p->right == new_node){
@@ -138,6 +378,7 @@ void tree::fix_tree(node * new_node){
 			if(gp->left and gp->left->red){
 				gp->left->red = gp->right->red = 0;
 				gp->red = 1;
+				new_node = gp;
 			}
 			else{
 				//break;

@@ -1,17 +1,22 @@
 struct node{
-	node * left;
-	node * right;
-	node * parent;
+	node * left = nullptr;
+	node * right = nullptr;
+	node * parent = nullptr;
 	bool red;
 	int value;
 	node(int in_value){value = in_value;}
 };
 class tree{
 	private:
-	node * root;
-	node * itr;
+	node * root = nullptr;
+	node * itr = nullptr;
 	public:
-	void rb_delete(node * to_delete);
+	void fix(node * p);
+	void fix_double_blk(node * replace);
+	void get_replacement(node* to_delete);
+	node * get_succ(node*in_node);
+	node *get_pred(node*in_node);
+	bool check_red(node * sibling);
 	void bst_delete(node * to_delete);
 	void read_file(char * file_name);
 	void del(int num);
